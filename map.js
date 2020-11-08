@@ -1,13 +1,19 @@
 (function() {
 
 function extract(block) {
-  const content = block.firstChild.innerHTML;
+  const content = block.firstChild;
+  block.removeChild(content);
+  content.removeAttribute("class");
   block.innerHTML = "<a href='#'>modal please</a>";
   const button = block.firstChild;
   button.addEventListener("click", (event) => {
-    console.log(content);
+    const modal_content = document.querySelector(".modal__content");
+    for (let child of [... modal_content.childNodes]) {
+      modal_content.removeChild(child);
+    }
+    modal_content.append(content);
+    MicroModal.show("modal-1");
   });
-  // block.parentNode.remove(block);
 }
 
 function inject(src, ready) {
@@ -75,7 +81,7 @@ const micromodal_css = `
 .modal__container {
   background-color: #fff;
   padding: 30px;
-  max-width: 500px;
+  max-width: 1000px;
   max-height: 100vh;
   border-radius: 4px;
   overflow-y: auto;
