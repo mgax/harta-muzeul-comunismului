@@ -4,7 +4,9 @@ function extract(block) {
   const content = block.firstChild;
   block.removeChild(content);
   content.removeAttribute("class");
-  block.innerHTML = "<a href='#'>modal please</a>";
+  const src = content.querySelector(".foreverthemes-ultimatebeforeafter-before-img").src;
+  const filename = src.match(/[^/]*$/)[0];
+  block.innerHTML = `<a href='#'>${filename}</a>`;
   const button = block.firstChild;
   button.addEventListener("click", (event) => {
     const modal_content = document.querySelector(".modal__content");
