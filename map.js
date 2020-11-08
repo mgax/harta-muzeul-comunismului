@@ -214,6 +214,10 @@ const micromodal_css = `
 `;
 
 const micromodal_css_extra = `
+.modal__overlay {
+  z-index: 4;
+}
+
 .modal__footer {
   padding: 0;
 }
