@@ -30,3 +30,49 @@ header {
     opacity: 0.6;
   }
 }
+
+#map {
+  position: absolute;
+  top: 120px;
+  bottom: 0;
+  left: 0;
+  right: 50%;
+  border: 1px solid red;
+}
+
+#detail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  border: 1px solid green;
+
+  h3 {
+    margin: 0;
+    padding: 0px 10px;
+    position: absolute;
+    top: 94px;
+    right: 81px;
+
+    background: #F15359;
+    border-radius: 3px;
+
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 47px;
+    text-align: right;
+    color: #FFFFFF;
+  }
+
+  #photo {
+    position: absolute;
+    top: 217px;
+    right: 68px;
+    left: 0;
+    height: 410px;
+    border: 1px solid red;
+  }
+}
