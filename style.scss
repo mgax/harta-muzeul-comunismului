@@ -38,6 +38,13 @@ header {
   left: 0;
   right: 50%;
   border: 1px solid red;
+
+  svg {
+    .city {
+      fill: #fff;
+      stroke: none;
+    }
+  }
 }
 
 #detail {

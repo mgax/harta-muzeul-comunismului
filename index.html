@@ -15,3 +15,55 @@
   <h3>Lipscani, colț cu Băcani</h3>
   <div id="photo"></div>
 </div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<script>
+(function() {
+
+const parent = document.querySelector("#map");
+const width = parent.clientWidth;
+const height = parent.clientHeight;
+
+const projection = d3.geoMercator();
+
+const path = d3.geoPath()
+  .projection(projection);
+
+const zoom = d3.zoom()
+  .scaleExtent([1, 8])
+  .on("zoom", zoomed);
+
+const svg = d3.select(parent).append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+const g = svg.append("g");
+
+svg.call(zoom);
+
+d3.json("bucuresti.geojson")
+  .then(bucuresti => {
+    const centroid = d3.geoPath().centroid(bucuresti);
+    const bounds = d3.geoPath().bounds(bucuresti);
+    const boundsWidth = (bounds[1][0] - bounds[0][0]) / 360 * 2 * Math.PI * 1.2;
+    console.log(width);
+    projection
+      .translate([width / 2, height / 2])
+      .center(centroid)
+      .scale((width - 1) / boundsWidth);
+    window.B = bucuresti;
+    g.append("path")
+      .datum(bucuresti)
+      .attr("class", "city")
+      .attr("d", path);
+  });
+
+function zoomed() {
+  g
+    .selectAll("path") // To prevent stroke width from scaling
+    .attr("transform", d3.event.transform);
+}
+
+})();
+</script>
