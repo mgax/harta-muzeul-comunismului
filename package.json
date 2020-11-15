@@ -1,0 +1,9 @@
+{
+  "name": "muzeul-comunismului-harta",
+  "scripts": {
+    "build": "./build.sh"
+  },
+  "dependencies": {
+    "sass": "^1.29.0"
+  }
+}
