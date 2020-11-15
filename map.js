@@ -52,9 +52,15 @@ function main() {
   console.log("Muzeul Comunismului The Map Was Here Again!")
 }
 
-window.addEventListener("load", () => {
+function entrypoint() {
   inject("https://unpkg.com/micromodal@0.4.6/dist/micromodal.js", main);
-});
+}
+
+if (document.readyState == "complete" || document.readyState == "loaded") {
+  entrypoint();
+} else {
+  window.addEventListener("load", entrypoint);
+}
 
 
 // Demo modal styles for micromodal.js
