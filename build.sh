@@ -1,3 +1,4 @@
 #!/bin/bash -ex
 
-./node_modules/.bin/sass style.scss dist/style.css
+mkdir -p assets/dist
+./node_modules/.bin/sass style.scss assets/dist/style.css

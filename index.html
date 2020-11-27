@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf8">
-<link rel="stylesheet" href="dist/style.css">
+<link rel="stylesheet" href="assets/dist/style.css">
 
 <body>
 
@@ -20,6 +20,11 @@
 
 <script>
 (function() {
+
+const ASSETS = "assets";
+const PLACES_KML = `${ASSETS}/Muzeul Comunismului Devel.kml`;
+const CITY_GEOJSON = `${ASSETS}/bucuresti.geojson`;
+const CITY_NAME = "București";
 
 function renderMap(parent, city) {
   const width = parent.clientWidth;
@@ -62,7 +67,7 @@ function renderMap(parent, city) {
 }
 
 async function getPlaces(name) {
-  const shim = await d3.xml("geo/Muzeul Comunismului Devel.kml");
+  const shim = await d3.xml(PLACES_KML);
   const href = shim.querySelector("NetworkLink > Link > href").textContent;
   const kml = await d3.xml(href);
   for (let folder of kml.querySelectorAll("Folder")) {
@@ -90,8 +95,8 @@ async function getPlaces(name) {
 
 (async function() {
   const parent = document.querySelector("#map");
-  const city = await d3.json("bucuresti.geojson");
-  const places = await getPlaces("București");
+  const city = await d3.json(CITY_GEOJSON);
+  const places = await getPlaces(CITY_NAME);
 
   renderMap(parent, city);
   console.log(places);
