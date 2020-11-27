@@ -25,6 +25,17 @@ const ASSETS = "assets";
 const PLACES_KML = `${ASSETS}/Muzeul Comunismului Devel.kml`;
 const CITY_GEOJSON = `${ASSETS}/bucuresti.geojson`;
 const CITY_NAME = "București";
+const ICONS = {
+  location: {
+    href: "assets/location.png",
+    anchor: [14, 8],
+  },
+  location_selected: {
+    href: "assets/location-selected.png",
+    anchor: [20, 14],
+  },
+};
+const icon = ICONS.location;
 
 function renderMap(parent, city, places, onClickPlace) {
   const width = parent.clientWidth;
@@ -58,8 +69,9 @@ function renderMap(parent, city, places, onClickPlace) {
   const locations = g.append("g")
     .selectAll(".location")
     .data(places)
-    .enter().append("path")
+    .enter().append("image")
       .attr("class", "location")
+      .attr("href", icon.href)
       .on("click", onClickPlace);
 
   function zoomed(transform) {
@@ -70,7 +82,11 @@ function renderMap(parent, city, places, onClickPlace) {
       .scale(cityScale * k);
 
     cityPath.attr("d", render);
-    locations.attr("d", render);
+    locations.attr("transform", function(feature) {
+      const [x, y] = projection(feature.geometry.coordinates);
+      const [ax, ay] = icon.anchor;
+      return `translate(${[x - ax, y - ay]})`;
+    });
   }
 
   zoomed({x: 0, y: 0, k: 1});
