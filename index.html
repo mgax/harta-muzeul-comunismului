@@ -47,12 +47,10 @@ d3.json("bucuresti.geojson")
     const centroid = d3.geoPath().centroid(bucuresti);
     const bounds = d3.geoPath().bounds(bucuresti);
     const boundsWidth = (bounds[1][0] - bounds[0][0]) / 360 * 2 * Math.PI * 1.2;
-    console.log(width);
     projection
       .translate([width / 2, height / 2])
       .center(centroid)
       .scale((width - 1) / boundsWidth);
-    window.B = bucuresti;
     g.append("path")
       .datum(bucuresti)
       .attr("class", "city")
@@ -64,6 +62,35 @@ function zoomed() {
     .selectAll("path") // To prevent stroke width from scaling
     .attr("transform", d3.event.transform);
 }
+
+async function getPlaces(name) {
+  const shim = await d3.xml("geo/Muzeul Comunismului Devel.kml");
+  const href = shim.querySelector("NetworkLink > Link > href").textContent;
+  const kml = await d3.xml(href);
+  for (let folder of kml.querySelectorAll("Folder")) {
+    if (folder.querySelector("name").textContent === name) {
+      const places = [];
+      for (let placemark of folder.querySelectorAll("Placemark")) {
+        const description = placemark.querySelector("description").textContent;
+        const temp = (new DOMParser).parseFromString(description, "text/html").querySelector("body");
+        for (let image of temp.querySelectorAll("img")) {
+          image.remove();
+        }
+        const filename = temp.textContent;
+        const coords = placemark.querySelector("Point > coordinates").textContent.trim().split(",");
+        const [lng, lat] = [+coords[0], +coords[1]];
+        const location = {
+          filename,
+          coords: { lng, lat },
+        };
+        places.push(location);
+      }
+      return places;
+    }
+  }
+}
+
+getPlaces("București").then((places) => console.log(places));
 
 })();
 </script>
