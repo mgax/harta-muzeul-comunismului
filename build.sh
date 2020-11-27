@@ -1,3 +1,3 @@
 #!/bin/bash -ex
 
-sass style.scss dist/style.css
+./node_modules/.bin/sass style.scss dist/style.css
