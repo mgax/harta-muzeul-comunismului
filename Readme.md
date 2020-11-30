@@ -3,7 +3,8 @@
 Mini-site for the [Communism Museum](https://muzeulcomunismului.ro/), showing a map with locations for historic photographs, overlaid with their modern-day counterparts.
 
 ## Content
-The locations are loaded from Google My Maps: https://www.google.com/maps/d/edit?mid=1UGUufFwlGg1qbSMTjqf8B6ajfwDgxfLh
+The locations are loaded from Google My Maps. [Here's a
+guide](./docs/locations.md) for editing locations.
 
 ## Build
 Build the front-end assets:
