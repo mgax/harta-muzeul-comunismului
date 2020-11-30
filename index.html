@@ -35,9 +35,9 @@ const ICONS = {
     anchor: [20, 14],
   },
 };
-const icon = ICONS.location;
 
 function renderMap(parent, city, places, onClickPlace) {
+  let orderedPlaces = [... places];
   const centroid = d3.geoPath().centroid(city);
   const bounds = d3.geoPath().bounds(city);
   const boundsWidth = (bounds[1][0] - bounds[0][0]) / 360 * 2 * Math.PI * 1.2;
@@ -48,14 +48,14 @@ function renderMap(parent, city, places, onClickPlace) {
   const projection = d3.geoMercator()
     .center(centroid);
 
-  const render = d3.geoPath(projection);
+  const geoPath = d3.geoPath(projection);
 
   let transform = {x: 0, y: 0, k: 1};
   const zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on("zoom", () => {
       transform = d3.event.transform;
-      zoomed();
+      render();
     });
 
   const svg = d3.select(parent).append("svg");
@@ -68,7 +68,7 @@ function renderMap(parent, city, places, onClickPlace) {
     svg
       .attr("width", width)
       .attr("height", height);
-    zoomed();
+    render();
   }
 
   d3.select(window).on('resize.updatesvg', windowSize);
@@ -81,27 +81,60 @@ function renderMap(parent, city, places, onClickPlace) {
     .datum(city)
     .attr("class", "city");
 
-  const locations = g.append("g")
-    .selectAll(".location")
-    .data(places)
-    .enter().append("image")
-      .attr("class", "location")
-      .attr("href", icon.href)
-      .on("click", onClickPlace);
+  let selectedLocation;
 
-  function zoomed() {
+  function icon(feature) {
+      if (feature === selectedLocation) {
+        return ICONS.location_selected;
+      } else {
+        return ICONS.location;
+      }
+  }
+
+  function render() {
     const {x, y, k} = transform;
 
     projection
       .translate([k * width / 2 + x, k * height / 2 + y])
       .scale(cityScale * k);
 
-    cityPath.attr("d", render);
-    locations.attr("transform", function(feature) {
+    cityPath.attr("d", geoPath);
+
+    function locationHref(feature) {
+      return icon(feature).href;
+    }
+
+    function locationTransform(feature) {
       const [x, y] = projection(feature.geometry.coordinates);
-      const [ax, ay] = icon.anchor;
+      const [ax, ay] = icon(feature).anchor;
       return `translate(${[x - ax, y - ay]})`;
-    });
+    }
+
+    const locations = g
+      .selectAll(".location")
+      .data(orderedPlaces);
+
+    locations.enter()
+      .append("image")
+        .attr("class", "location")
+        .on("click", locationClicked)
+        .attr("href", locationHref)
+        .attr("transform", locationTransform);
+
+    locations.exit()
+      .remove();
+
+    locations
+      .attr("href", locationHref)
+      .attr("transform", locationTransform);
+  }
+
+  function locationClicked(feature) {
+    selectedLocation = feature;
+    orderedPlaces.splice(orderedPlaces.indexOf(feature), 1);
+    orderedPlaces.push(feature);
+    render();
+    onClickPlace(feature);
   }
 
   windowSize();
