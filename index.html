@@ -38,25 +38,40 @@ const ICONS = {
 const icon = ICONS.location;
 
 function renderMap(parent, city, places, onClickPlace) {
-  const width = parent.clientWidth;
-  const height = parent.clientHeight;
   const centroid = d3.geoPath().centroid(city);
   const bounds = d3.geoPath().bounds(city);
   const boundsWidth = (bounds[1][0] - bounds[0][0]) / 360 * 2 * Math.PI * 1.2;
-  const cityScale = (width - 1) / boundsWidth;
+  let width;
+  let height;
+  let cityScale;
 
   const projection = d3.geoMercator()
     .center(centroid);
 
   const render = d3.geoPath(projection);
 
+  let transform = {x: 0, y: 0, k: 1};
   const zoom = d3.zoom()
     .scaleExtent([1, 8])
-    .on("zoom", () => { zoomed(d3.event.transform) });
+    .on("zoom", () => {
+      transform = d3.event.transform;
+      zoomed();
+    });
 
-  const svg = d3.select(parent).append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  const svg = d3.select(parent).append("svg");
+
+  function windowSize() {
+    width = parent.clientWidth;
+    height = parent.clientHeight;
+    cityScale = (width - 1) / boundsWidth;
+
+    svg
+      .attr("width", width)
+      .attr("height", height);
+    zoomed();
+  }
+
+  d3.select(window).on('resize.updatesvg', windowSize);
 
   const g = svg.append("g");
 
@@ -74,7 +89,7 @@ function renderMap(parent, city, places, onClickPlace) {
       .attr("href", icon.href)
       .on("click", onClickPlace);
 
-  function zoomed(transform) {
+  function zoomed() {
     const {x, y, k} = transform;
 
     projection
@@ -89,7 +104,7 @@ function renderMap(parent, city, places, onClickPlace) {
     });
   }
 
-  zoomed({x: 0, y: 0, k: 1});
+  windowSize();
 }
 
 async function getPlaces(name) {
